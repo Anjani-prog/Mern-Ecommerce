@@ -112,18 +112,6 @@ class AddProduct extends Component {
                   onChange={this.handleChange}
                 />
               </div>
-              <div className="field">
-                <label className="label">Description: </label>
-                <textarea
-                  className="textarea"
-                  type="text"
-                  rows="2"
-                  style={{ resize: "none" }}
-                  name="description"
-                  value={description}
-                  onChange={this.handleChange}
-                />
-              </div>
               {this.state.flash && (
                 <div className={`notification ${this.state.flash.status}`}>
                   {this.state.flash.msg}

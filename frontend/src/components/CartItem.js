@@ -5,7 +5,7 @@ const CartItem = props => {
 
   const { product, amount } = cartItem;
   return (
-    <div className=" column is-half">
+    <div className=" column is-one-third">
       <div className="box">
         <div className="media">
           <div className="media-left">
@@ -21,7 +21,7 @@ const CartItem = props => {
               {product.name}{" "}
               <span className="tag is-info">${product.price}</span>
             </b>
-            <div>{product.shortDesc}</div>
+            {/* <div>{product.shortDesc}</div> */}
             <small>{`${amount} in cart`}</small>
           </div>
           <div

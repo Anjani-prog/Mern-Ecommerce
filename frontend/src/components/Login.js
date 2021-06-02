@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import withContext from "../withContext";
+import { Switch, Route, Link, BrowserRouter as Router } from "react-router-dom";
+import Register from './Register';
 
 class Login extends Component {
   constructor(props) {
@@ -9,6 +11,8 @@ class Login extends Component {
       username: "",
       password: ""
     };
+    this.routerRef = React.createRef();
+
   }
 
   handleChange = e => this.setState({ [e.target.name]: e.target.value, error: "" });
@@ -30,7 +34,7 @@ class Login extends Component {
 
   render() {
     return !this.props.context.user ? (
-      <>
+      <Router ref={this.routerRef}>
         <div className="hero is-info ">
           <div className="hero-body">
             <h4 className="title">Login</h4>
@@ -62,17 +66,29 @@ class Login extends Component {
               {this.state.error && (
                 <div className="has-text-danger">{this.state.error}</div>
               )}
-              <div className="field is-clearfix">
+              <div className="field is-clearfix  columns is-vcentered is-half ">
                 <button
-                  className="button is-info is-outlined is-pulled-right"
+                  className="button column  is-info is-outlined is-pulled-right"
                 >
                   Submit
                 </button>
+                <button
+                  className="button column is-info is-outlined is-pulled-right"
+                >
+                  <Link to="/register">
+                    Register
+                  </Link>
+                </button>
+
               </div>
+
             </div>
           </div>
+          <Switch>
+            <Route exact path="/register" component={Register} />
+          </Switch>
         </form>
-      </>
+      </Router >
     ) : (
       <Redirect to="/products" />
     );

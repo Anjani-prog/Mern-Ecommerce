@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes/api');
+const config = require('config')
 const path = require('path');
 require('dotenv').config();
 
@@ -16,7 +17,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const port = process.env.PORT || 5000;
 
 //connect to the database
-mongoose.connect('mongodb+srv://todo:todo567@todo.xhayz.mongodb.net/todo?retryWrites=true&w=majority', {
+mongoose.connect(config.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -49,3 +50,5 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 });
+
+module.exports = app;

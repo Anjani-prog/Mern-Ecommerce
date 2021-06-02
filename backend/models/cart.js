@@ -3,23 +3,23 @@ const { Schema } = Mongoose;
 
 // Cart Item Schema
 const CartItemSchema = new Schema({
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: 'Product'
+  name: {
+    type: String,
+    trim: true
   },
-  quantity: Number,
-  totalPrice: {
+  imageUrl: {
+    type: String
+  },
+  description: {
+    type: String,
+    trim: true
+  },
+  quantity: {
     type: Number
   },
-  priceWithTax: {
-    type: Number,
-    default: 0
+  price: {
+    type: Number
   },
-  status: {
-    type: String,
-    default: 'Not processed',
-    enum: ['Not processed', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
-  }
 });
 
 module.exports = Mongoose.model('CartItem', CartItemSchema);
