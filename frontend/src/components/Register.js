@@ -22,15 +22,15 @@ class Register extends Component {
         if (!username || !password || !cpassword) {
             return this.setState({ error: "Fill all fields!" });
         }
-        else if (password === cpassword) {
+        else if (password !== cpassword) {
             return this.setState({ error: "password and confirm password not matches!" });
         }
-        // this.props.context.login(username, password)
-        //     .then((loggedIn) => {
-        //         if (!loggedIn) {
-        //             this.setState({ error: "Invalid Credentails" });
-        //         }
-        //     })
+        this.props.context.register(username, password)
+            .then((loggedIn) => {
+                if (!loggedIn) {
+                    this.setState({ error: "Invalid Credentails" });
+                }
+            })
     };
 
     render() {
@@ -68,7 +68,7 @@ class Register extends Component {
                                 <label className="label">Confirm Password: </label>
                                 <input
                                     className="input"
-                                    type="cpassword"
+                                    type="password"
                                     name="cpassword"
                                     onChange={this.handleChange}
                                 />

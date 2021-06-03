@@ -2,20 +2,20 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
 const config = require('config')
+const path = require("path")
 
 
 router.post('/add-product', async (req, res) => {
     try {
         let {
             name,
-            imageUrl,
             description,
             quantity,
             price,
         } = req.body
+
         let product = new Product({
             name,
-            imageUrl,
             description,
             quantity,
             price,

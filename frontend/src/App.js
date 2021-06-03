@@ -26,31 +26,62 @@ export default class App extends Component {
     let user = localStorage.getItem("user");
     let cart = localStorage.getItem("cart");
 
-    const products = await axios.get('http://localhost:3001/products');
+    const products = await axios.get('http://localhost:5000/list-products');
     user = user ? JSON.parse(user) : null;
     cart = cart ? JSON.parse(cart) : {};
 
     this.setState({ user, products: products.data, cart });
   }
 
-  login = async (email, password) => {
+  register = async (email, password) => {
     const res = await axios.post(
-      'http://localhost:3001/login',
-      { email, password },
+      'http://localhost:5000/api/user/signup',
+      { username: email, password: password },
     ).catch((res) => {
       return { status: 401, message: 'Unauthorized' }
     })
+    if (res.status === 200) {
+      if (res.data.status === true) {
+        alert(res.data.message)
+        return true;
+      } else {
+        alert(res.data.message)
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+
+  }
+
+  login = async (email, password) => {
+    const res = await axios.post(
+      'http://localhost:5000/api/user/login',
+      { username: email, password: password },
+    ).catch((res) => {
+      return { status: 401, message: 'Unauthorized' }
+    })
+    console.log(res)
 
     if (res.status === 200) {
-      const { email } = jwt_decode(res.data.accessToken)
-      const user = {
-        email,
-        token: res.data.accessToken,
-        accessLevel: email === 'admin@example.com' ? 0 : 1
-      }
+      if (res.data.status === true) {
+        const { email } = jwt_decode(res.data.data.token)
+        const user = {
+          email,
+          token: res.data.data.token,
+          accessLevel: email === 'admin@example.com' ? 0 : 1
+        }
 
-      this.setState({ user });
-      localStorage.setItem("user", JSON.stringify(user));
+        this.setState({ user });
+        localStorage.setItem("user", JSON.stringify(user));
+        alert(res.data.message)
+
+        return true;
+      } else {
+        alert(res.data.message)
+        return false;
+      }
       return true;
     } else {
       return false;
@@ -128,6 +159,7 @@ export default class App extends Component {
           removeFromCart: this.removeFromCart,
           addToCart: this.addToCart,
           login: this.login,
+          register: this.register,
           addProduct: this.addProduct,
           clearCart: this.clearCart,
           checkout: this.checkout
