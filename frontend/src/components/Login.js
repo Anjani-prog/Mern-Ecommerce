@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
 import withContext from "../withContext";
-import { Switch, Route, Link, BrowserRouter as Router } from "react-router-dom";
-import Register from './Register';
+import { Switch, Route, Link, Redirect, BrowserRouter as Router } from "react-router-dom";
 
 class Login extends Component {
   constructor(props) {
@@ -12,7 +10,6 @@ class Login extends Component {
       password: ""
     };
     this.routerRef = React.createRef();
-
   }
 
   handleChange = e => this.setState({ [e.target.name]: e.target.value, error: "" });
@@ -32,62 +29,58 @@ class Login extends Component {
       })
   };
 
+
+
+
   render() {
     return !this.props.context.user ? (
       <Router ref={this.routerRef}>
-        <div className="hero is-info ">
-          <div className="hero-body">
-            <h4 className="title">Login</h4>
-          </div>
-        </div>
-        <br />
-        <br />
-        <form onSubmit={this.login}>
-          <div className="columns is-mobile is-centered">
-            <div className="column is-one-third">
-              <div className="field">
-                <label className="label">Email: </label>
-                <input
-                  className="input"
-                  type="email"
-                  name="username"
-                  onChange={this.handleChange}
-                />
-              </div>
-              <div className="field">
-                <label className="label">Password: </label>
-                <input
-                  className="input"
-                  type="password"
-                  name="password"
-                  onChange={this.handleChange}
-                />
-              </div>
-              {this.state.error && (
-                <div className="has-text-danger">{this.state.error}</div>
-              )}
-              <div className="field is-clearfix  columns is-vcentered is-half ">
-                <button
-                  className="button column  is-info is-outlined is-pulled-right"
-                >
-                  Submit
-                </button>
-                <button
-                  className="button column is-info is-outlined is-pulled-right"
-                >
-                  <Link to="/register">
-                    Register
-                  </Link>
-                </button>
-
-              </div>
-
+        <div>
+          <div className="hero is-info ">
+            <div className="hero-body">
+              <h4 className="title">Login</h4>
             </div>
           </div>
-          <Switch>
-            <Route exact path="/register" component={Register} />
-          </Switch>
-        </form>
+          <br />
+          <br />
+          <form onSubmit={this.login}>
+            <div className="columns is-mobile is-centered">
+              <div className="column is-one-third">
+                <div className="field">
+                  <label className="label">Email: </label>
+                  <input
+                    className="input"
+                    type="email"
+                    name="username"
+                    onChange={this.handleChange}
+                  />
+                </div>
+                <div className="field">
+                  <label className="label">Password: </label>
+                  <input
+                    className="input"
+                    type="password"
+                    name="password"
+                    onChange={this.handleChange}
+                  />
+                </div>
+                {this.state.error && (
+                  <div className="has-text-danger">{this.state.error}</div>
+                )}
+                <div className="field is-clearfix  is-vcentered is-half ">
+                  <button
+                    style={{ margin: "10px" }}
+                    className="button column  is-info is-outlined is-pulled-right"
+                  >
+                    Submit
+                </button>
+
+
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </Router >
     ) : (
       <Redirect to="/products" />

@@ -7,6 +7,7 @@ import AddProduct from './components/AddProduct';
 import Cart from './components/Cart';
 import Login from './components/Login';
 import ProductList from './components/ProductList';
+import Register from './components/Register';
 
 import Context from "./Context";
 
@@ -166,15 +167,20 @@ export default class App extends Component {
                     {Object.keys(this.state.cart).length}
                   </span>
                 </Link>
+
                 {!this.state.user ? (
                   <Link to="/login" className="navbar-item">
                     Login
                   </Link>
+
                 ) : (
                   <Link to="/" onClick={this.logout} className="navbar-item">
                     Logout
                   </Link>
                 )}
+                <Link to="/register" className="navbar-item">
+                  Register
+                  </Link>
               </div>
             </nav>
 
@@ -184,6 +190,8 @@ export default class App extends Component {
               <Route exact path="/cart" component={Cart} />
               <Route exact path="/add-product" component={AddProduct} />
               <Route exact path="/products" component={ProductList} />
+              <Route exact path="/register" component={Register} />
+
             </Switch>
           </div>
         </Router >
