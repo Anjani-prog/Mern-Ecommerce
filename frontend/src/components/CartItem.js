@@ -3,7 +3,7 @@ import React from "react";
 const CartItem = props => {
   const { cartItem, cartKey } = props;
 
-  const { product, amount } = cartItem;
+  const { product, price } = cartItem;
   return (
     <div className=" column is-one-third">
       <div className="box">
@@ -12,7 +12,7 @@ const CartItem = props => {
             <figure className="image is-64x64">
               <img
                 src="https://bulma.io/images/placeholders/128x128.png"
-                alt={product.shortDesc}
+                alt={product.description}
               />
             </figure>
           </div>
@@ -21,8 +21,8 @@ const CartItem = props => {
               {product.name}{" "}
               <span className="tag is-info">${product.price}</span>
             </b>
-            {/* <div>{product.shortDesc}</div> */}
-            <small>{`${amount} in cart`}</small>
+            {/* <div>{product.description}</div> */}
+            <small>{`${product.quantity} in cart`}</small>
           </div>
           <div
             className="media-right"

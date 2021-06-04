@@ -6,8 +6,7 @@ import axios from 'axios';
 const initState = {
   name: "",
   price: "",
-  stock: "",
-  shortDesc: "",
+  quantity: "",
   description: ""
 };
 
@@ -19,23 +18,23 @@ class AddProduct extends Component {
 
   save = async (e) => {
     e.preventDefault();
-    const { name, price, stock, shortDesc, description } = this.state;
+    const { name, price, quantity, description } = this.state;
 
     if (name && price) {
       const id = Math.random().toString(36).substring(2) + Date.now().toString(36);
 
       await axios.post(
-        'http://localhost:3001/products',
-        { id, name, price, stock, shortDesc, description },
+        'http://localhost:5000/api/product/add-product',
+
+        { id, name, price, quantity, description },
       )
 
       this.props.context.addProduct(
         {
           name,
           price,
-          shortDesc,
           description,
-          stock: stock || 0
+          quantity: quantity || 0
         },
         () => this.setState(initState)
       );
@@ -53,7 +52,7 @@ class AddProduct extends Component {
   handleChange = e => this.setState({ [e.target.name]: e.target.value, error: "" });
 
   render() {
-    const { name, price, stock, shortDesc, description } = this.state;
+    const { name, price, quantity, description } = this.state;
     const { user } = this.props.context;
 
     return !(user && user.accessLevel < 1) ? (
@@ -97,8 +96,8 @@ class AddProduct extends Component {
                 <input
                   className="input"
                   type="number"
-                  name="stock"
-                  value={stock}
+                  name="quantity"
+                  value={quantity}
                   onChange={this.handleChange}
                 />
               </div>
@@ -107,8 +106,8 @@ class AddProduct extends Component {
                 <input
                   className="input"
                   type="text"
-                  name="shortDesc"
-                  value={shortDesc}
+                  name="description"
+                  value={description}
                   onChange={this.handleChange}
                 />
               </div>

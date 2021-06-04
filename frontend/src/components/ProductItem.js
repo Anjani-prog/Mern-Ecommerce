@@ -10,8 +10,8 @@ const ProductItem = props => {
             <figure className="image is-fullwidth">
               <img
                 class="is-rounded"
-                src={Boolean(product.shortDesc) ? "https://bulma.io/images/placeholders/128x128.png" : "https://bulma.io/images/placeholders/128x128.png"}
-                alt={product.shortDesc}
+                src={Boolean(product.description) ? "https://bulma.io/images/placeholders/128x128.png" : "https://bulma.io/images/placeholders/128x128.png"}
+                alt={product.description}
               />
             </figure>
           </div>
@@ -20,9 +20,9 @@ const ProductItem = props => {
               {product.name}{" "}
               <span className="tag is-warning is-light">${product.price}</span>
             </b>
-            {/* <div>{product.shortDesc}</div> */}
-            {product.stock > 0 ? (
-              <small>{product.stock + " Available"}</small>
+            {/* <div>{product.description}</div> */}
+            {product.quantity > 0 ? (
+              <small>{product.quantity + " Available"}</small>
             ) : (
               <small className="has-text-danger">Out Of Stock</small>
             )}

@@ -26,11 +26,12 @@ export default class App extends Component {
     let user = localStorage.getItem("user");
     let cart = localStorage.getItem("cart");
 
-    const products = await axios.get('http://localhost:5000/list-products');
+    const products = await axios.get('http://localhost:5000/api/product/list-products');
+    console.log(products)
     user = user ? JSON.parse(user) : null;
     cart = cart ? JSON.parse(cart) : {};
 
-    this.setState({ user, products: products.data, cart });
+    this.setState({ user, products: products.data.products, cart });
   }
 
   register = async (email, password) => {
@@ -43,6 +44,8 @@ export default class App extends Component {
     if (res.status === 200) {
       if (res.data.status === true) {
         alert(res.data.message)
+        this.routerRef.current.history.push("/login");
+
         return true;
       } else {
         alert(res.data.message)
@@ -66,11 +69,12 @@ export default class App extends Component {
 
     if (res.status === 200) {
       if (res.data.status === true) {
-        const { email } = jwt_decode(res.data.data.token)
+        console.log(jwt_decode(res.data.data.token))
+        const { username } = jwt_decode(res.data.data.token)
         const user = {
-          email,
+          username,
           token: res.data.data.token,
-          accessLevel: email === 'admin@example.com' ? 0 : 1
+          accessLevel: username === 'admin@example.com' ? 0 : 1
         }
 
         this.setState({ user });
@@ -107,8 +111,8 @@ export default class App extends Component {
     } else {
       cart[cartItem.id] = cartItem;
     }
-    if (cart[cartItem.id].amount > cart[cartItem.id].product.stock) {
-      cart[cartItem.id].amount = cart[cartItem.id].product.stock;
+    if (cart[cartItem.id].amount > cart[cartItem.id].product.quantity) {
+      cart[cartItem.id].amount = cart[cartItem.id].product.quantity;
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     this.setState({ cart });
@@ -137,10 +141,10 @@ export default class App extends Component {
 
     const products = this.state.products.map(p => {
       if (cart[p.name]) {
-        p.stock = p.stock - cart[p.name].amount;
+        p.quantity = p.quantity - cart[p.name].amount;
 
         axios.put(
-          `http://localhost:3001/products/${p.id}`,
+          `http://localhost:5000/products/${p.id}`,
           { ...p },
         )
       }
