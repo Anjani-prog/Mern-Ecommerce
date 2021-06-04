@@ -1,4 +1,5 @@
 {
     "JWT_ENC_KEY": "EnCryPtionKey",
+    "CRYPT_JS_ENC_KEY": "cRyPtOjSeNcK",
     "MONGO_URI": "mongodb+srv://ecommerce:cluster1234@cluster0.ojiq1.mongodb.net/ecommerce?retryWrites=true&w=majority"
 }

@@ -4,6 +4,7 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const config = require('config')
+const CryptoJS = require("crypto-js");
 
 // Function to check if username exixst
 const checkUserNameExists = async (username) => {
@@ -27,8 +28,7 @@ router.post('/signup', async (req, res) => {
         }
         let user = new User();
         user.username = username;
-        let salt = bcrypt.genSaltSync(10)
-        let hash = bcrypt.hashSync(password, salt)
+        let hash = CryptoJS.MD5(password).toString()
         user.password = hash
         await user.save()
         return res.json({
@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
             username
         })
         if (user) {
-            if (await bcrypt.compare(password, user.password)) {
+            if (user.password == CryptoJS.MD5(password).toString()) {
                 let token = jwt.sign({
                     _id: user._id,
                     username: user.username
