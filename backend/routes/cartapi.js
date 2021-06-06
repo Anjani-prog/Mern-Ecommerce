@@ -107,4 +107,40 @@ router.post('/clear-cart', async (req, res) => {
     }
 })
 
+router.post('/checkout', async (req, res) => {
+    try {
+        let { user, products } = req.body;
+        await products.forEach(async item => {
+            await Product.updateOne({
+                "_id": item._id
+            }, {
+                $inc: {
+                    "quantity": -item.quantity
+                }
+            })
+        });
+        try {
+            let products = await Product.find({ isActive: true }, { __v: 0, isActive: 0 })
+            return res.json({
+                status: true,
+                products: products
+            })
+        }
+        catch (err) {
+            console.log(err)
+            return res.json({
+                status: false,
+                message: err.message
+            })
+        }
+    } catch (err) {
+        console.log(err)
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+})
+
+
 module.exports = router;

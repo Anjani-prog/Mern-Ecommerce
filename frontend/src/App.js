@@ -10,6 +10,7 @@ import ProductList from './components/ProductList';
 import Register from './components/Register';
 
 import Context from "./Context";
+import Loader from "react-loader-spinner";
 
 export default class App extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ export default class App extends Component {
     this.state = {
       user: null,
       cart: {},
+      visible: false,
       products: []
     };
     this.routerRef = React.createRef();
@@ -25,23 +27,27 @@ export default class App extends Component {
   async componentDidMount() {
     let user = localStorage.getItem("user");
     let cart = localStorage.getItem("cart");
+    this.setState({ visible: true });
 
     const products = await axios.get('http://localhost:5000/api/product/list-products');
-    console.log(products)
     user = user ? JSON.parse(user) : null;
     cart = cart ? JSON.parse(cart) : {};
 
-    this.setState({ user, products: products.data.products, cart });
+    this.setState({ user, products: products.data.products, cart, visible: false });
   }
 
   register = async (email, password) => {
+    this.setState({ visible: true });
+
     const res = await axios.post(
       'http://localhost:5000/api/user/signup',
       { username: email, password: password },
     ).catch((res) => {
+      this.setState({ visible: false });
       return { status: 401, message: 'Unauthorized' }
     })
     if (res.status === 200) {
+      this.setState({ visible: false });
       if (res.data.status === true) {
         alert(res.data.message)
         this.routerRef.current.history.push("/login");
@@ -53,25 +59,28 @@ export default class App extends Component {
       }
     }
     else {
+      this.setState({ visible: false });
       return false;
     }
 
   }
 
   login = async (email, password) => {
+    this.setState({ visible: true });
     const res = await axios.post(
       'http://localhost:5000/api/user/login',
       { username: email, password: password },
     ).catch((res) => {
+      this.setState({ visible: false });
       return { status: 401, message: 'Unauthorized' }
     })
-    console.log(res)
 
     if (res.status === 200) {
       if (res.data.status === true) {
-        console.log(jwt_decode(res.data.data.token))
-        const { username } = jwt_decode(res.data.data.token)
+        // console.log(jwt_decode(res.data.data.token))
+        const { username, _id } = jwt_decode(res.data.data.token)
         const user = {
+          _id,
           username,
           token: res.data.data.token,
           accessLevel: username === 'admin@example.com' ? 0 : 1
@@ -80,14 +89,15 @@ export default class App extends Component {
         this.setState({ user });
         localStorage.setItem("user", JSON.stringify(user));
         alert(res.data.message)
-
+        this.setState({ visible: false });
         return true;
       } else {
+        this.setState({ visible: false });
         alert(res.data.message)
         return false;
       }
-      return true;
     } else {
+      this.setState({ visible: false });
       return false;
     }
   }
@@ -106,16 +116,22 @@ export default class App extends Component {
 
   addToCart = cartItem => {
     let cart = this.state.cart;
-    if (cart[cartItem.id]) {
-      cart[cartItem.id].amount += cartItem.amount;
-    } else {
-      cart[cartItem.id] = cartItem;
+    if (cartItem.product.quantity !== 0) {
+      if (cart[cartItem.id]) {
+        cart[cartItem.id].amount += cartItem.amount;
+      } else {
+        cart[cartItem.id] = cartItem;
+      }
+      if (cart[cartItem.id].amount > cart[cartItem.id].product.quantity) {
+        cart[cartItem.id].amount = cart[cartItem.id].product.quantity;
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      this.setState({ cart });
     }
-    if (cart[cartItem.id].amount > cart[cartItem.id].product.quantity) {
-      cart[cartItem.id].amount = cart[cartItem.id].product.quantity;
+    else {
+      alert('Product is not available')
     }
-    localStorage.setItem("cart", JSON.stringify(cart));
-    this.setState({ cart });
+
   };
 
   removeFromCart = cartItemId => {
@@ -128,31 +144,54 @@ export default class App extends Component {
   clearCart = () => {
     let cart = {};
     localStorage.removeItem("cart");
-    this.setState({ cart });
+    this.setState({ cart, visible: false });
   };
 
-  checkout = () => {
+  checkout = async () => {
+    this.setState({ visible: true });
     if (!this.state.user) {
+      this.setState({ visible: false });
       this.routerRef.current.history.push("/login");
       return;
     }
-
     const cart = this.state.cart;
 
     const products = this.state.products.map(p => {
       if (cart[p.name]) {
-        p.quantity = p.quantity - cart[p.name].amount;
-
-        axios.put(
-          `http://localhost:5000/products/${p.id}`,
-          { ...p },
-        )
+        p.quantity = cart[p.name].amount;
       }
       return p;
     });
+    const user = this.state.user;
+    const res = await axios.post(
+      `http://localhost:5000/api/cart/checkout`,
+      { products: products, user: user },
+    )
+    if (res.status === 200) {
+      if (res.data.status === true) {
+        await this.setState({ products: res.data.products });
+        await this.clearCart();
+        return true;
+      } else {
+        alert(res.data.message)
+        this.setState({ visible: false });
+        return false;
+      }
+    }
 
-    this.setState({ products });
-    this.clearCart();
+    // const products = this.state.products.map(p => {
+    //   if (cart[p.name]) {
+    //     p.quantity = p.quantity - cart[p.name].amount;
+
+    //     axios.put(
+    //       `http://localhost:5000/products/${p.id}`,
+    //       { ...p },
+    //     )
+    //   }
+    //   return p;
+    // });
+
+
   };
 
   render() {
@@ -170,6 +209,16 @@ export default class App extends Component {
         }}
       >
         <Router ref={this.routerRef}>
+          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+            <Loader
+              type="Puff"
+              color="#00BFFF"
+              height={100}
+              width={100}
+              visible={this.state.visible}
+              timeout={3000}
+            />
+          </div>
           <div className="App">
             <nav class="navbar">
               <div class="container">
